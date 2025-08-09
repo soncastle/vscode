@@ -1,27 +1,26 @@
-const http = require('http');
-const bodyParser = require('body-parser');
 const express = require('express');
-const adminRoutes = require('./routes/admin')
-const shopRoutes = require('./routes/shop')
-
+const bodyParser = require('body-parser');
+const path = require('path');
 const app = express();
 
-app.use(bodyParser.urlencoded({extended: false})); //미들웨어 등록 - 수동으로 해야했던 요청본문분석 수행
+// const adminRoutes = require('./routes/admin');
+const adminData = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
-app.use('/admin', adminRoutes);
+
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// app.use('/admin', adminRoutes);
+app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 
-app.use((req, res, next)=>{
-    res.status(404).send('<h1>Page Not Found</h1>')
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+    // res.status(404).send('<h1>Page not found</h1>');
 });
 
-// const server = http.createServer(app);
-// server.listen(3000); //서버 바로 농료하지 않고 계속 열어놓을 수 있도록 하는 것!
-
 app.listen(3000);
-  
-
-
 
 
 
